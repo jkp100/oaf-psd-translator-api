@@ -1,27 +1,32 @@
 import requests
 
-def translate_text(text, source_lang, target_lang):
-    api_url = "https://libretranslate.de/translate"
+class TranslatorService:
+    def translate_text(self, text, source_lang, target_lang):
+        pass
     
-    params = {
-        'q': text,
-        'source': source_lang,
-        'target': target_lang
-    }
+class MockTranslatorService(TranslatorService):
+    def translate_text(self, text, source_lang, target_lang):
+        # Mock implementation
+        return f"Translating... '{text}' from {source_lang} to {target_lang}"
 
-    response = requests.post(api_url, data=params)
+class APITranslatorService(TranslatorService):
+    def __init__(self, api_url):
+        self.api_url = api_url
 
-    if response.status_code == 200:
-        translation = response.json()['translatedText']
-        return translation
-    else:
-        return f"Error {response.status_code}: {response.text}"
+    def translate_text(self, text, source_lang, target_lang):
+        params = {
+            'q': text,
+            'source': source_lang,
+            'target': target_lang
+        }
 
-# Example usage
-text_to_translate = "Hello, how are you?"
-source_language = "en"
-target_language = "fr"
+        response = requests.post(self.api_url, data=params)
 
-result = translate_text(text_to_translate, source_language, target_language)
-print(f"Original: {text_to_translate}")
-print(f"Translation: {result}")
+        if response.status_code == 200:
+            translation = response.json()['translatedText']
+            return translation
+        else:
+            return f"Error {response.status_code}: {response.text}"
+
+
+
