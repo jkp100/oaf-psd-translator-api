@@ -27,19 +27,19 @@ class TranslatorDatabase:
         except sqlite3.Error as e:
             print(f"Error creating table: {e}")
 
-    def add_translation(self, text_to_translate, detected_language, translated_text, source_lang, target_lang):
+    def add_translation(self, original_text, detected_language, translated_text, source_lang, target_lang):
         query = '''
-        INSERT INTO translations (text_to_translate, detected_language, translated_text, source_lang, target_lang)
+        INSERT INTO translations (original_text, detected_language, translated_text, source_lang, target_lang)
         VALUES (?, ?, ?, ?, ?);
         '''
         try:
-            self.conn.execute(query, (text_to_translate, detected_language, translated_text, source_lang, target_lang))
+            self.conn.execute(query, (original_text, detected_language, translated_text, source_lang, target_lang))
             self.conn.commit()
         except sqlite3.Error as e:
             print(f"Error adding translation: {e}")
 
     def get_all_translations(self):
-        query = 'SELECT * FROM translations;'
+        query = 'SELECT translated_text FROM translations;'
         try:
             cursor = self.conn.cursor()
             cursor.execute(query)
@@ -48,12 +48,13 @@ class TranslatorDatabase:
             print(f"Error retrieving translations: {e}")
 
     def reset_database(self):
-        query = 'DROP TABLE IF EXISTS translations;'
+        query = 'DELETE FROM translations;'
         try:
             self.conn.execute(query)
-            self.create_table()
+            self.conn.commit()
         except sqlite3.Error as e:
             print(f"Error resetting database: {e}")
+
 
     def close_connection(self):
         try:
@@ -61,18 +62,18 @@ class TranslatorDatabase:
         except sqlite3.Error as e:
             print(f"Error closing connection: {e}")
 
-def main():
-    parser = argparse.ArgumentParser(description='Translator Database Script')
-    parser.add_argument('--reset', action='store_true', help='Reset the database')
-    args = parser.parse_args()
+    def main():
+        parser = argparse.ArgumentParser(description='Translator Database Script')
+        parser.add_argument('--reset', action='store_true', help='Reset the database')
+        args = parser.parse_args()
 
-    if args.reset:
-        db = TranslatorDatabase()
-        db.reset_database()
-        print("Database reset successfully.")
-        db.close_connection()
-    else:
-        print("Use --reset to reset the database.")
+        if args.reset:
+            db = TranslatorDatabase()
+            db.reset_database()
+            print("Database reset successfully.")
+            db.close_connection()
+        else:
+            print("Use --reset to reset the database.")
 
 if __name__ == "__main__":
-    main()
+    TranslatorDatabase.main()
