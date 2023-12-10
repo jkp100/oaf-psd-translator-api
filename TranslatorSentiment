@@ -1,0 +1,13 @@
+# Please, "pip install spacy" & "pip install spacytextblob" in terminal first
+
+from textblob import TextBlob
+
+class TranslatorSentiment:
+    def __init__(self):
+        pass
+
+    def analyze_sentiment(self, text):
+        blob = TextBlob(text)
+        sentiment_score = blob.sentiment.polarity
+        sentiment_label = "Positive" if sentiment_score > 0 else "Negative" if sentiment_score < 0 else "Neutral"
+        return sentiment_score, sentiment_label
