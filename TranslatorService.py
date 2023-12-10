@@ -1,27 +1,27 @@
 import requests
+import json
 
-def translate_text(text, source_lang, target_lang):
-    api_url = "https://libretranslate.de/translate"
-    
-    params = {
-        'q': text,
-        'source': source_lang,
-        'target': target_lang
-    }
+class TranslatorService:
+    def __init__(self, api_url):
+        self.api_url = api_url
 
-    response = requests.post(api_url, data=params)
+    def translate_text(self, original_text):
+        api_url = f"{self.api_url}/translate"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "q": original_text,
+            "source": "auto",
+            "target": "es",
+            "format": "text",
+            "api_key": ""
+        }
 
-    if response.status_code == 200:
-        translation = response.json()['translatedText']
-        return translation
-    else:
-        return f"Error {response.status_code}: {response.text}"
+        response = requests.post(api_url, data=json.dumps(payload), headers=headers)
 
-# Example usage
-text_to_translate = "Hello, how are you?"
-source_language = "en"
-target_language = "fr"
-
-result = translate_text(text_to_translate, source_language, target_language)
-print(f"Original: {text_to_translate}")
-print(f"Translation: {result}")
+        if response.status_code == 200:
+            result = response.json()
+            print(result)
+            return result["translatedText"]
+        else:
+            print(f"Error: {response.status_code}, {response.text}")
+            return None
