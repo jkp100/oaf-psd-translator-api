@@ -1,11 +1,11 @@
 # Please, "pip install spacy" & "pip install spacytextblob" in terminal first
 
 from textblob import TextBlob
-
+#Create Sentiment Class
 class TranslatorSentiment:
     def __init__(self):
         pass
-
+    #Function to Visualize Sentiment
     def analyze_sentiment(self, text):
         blob = TextBlob(text)
         sentiment_score = blob.sentiment.polarity
